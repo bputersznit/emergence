@@ -26,10 +26,34 @@ def card_suit_color(suit):
     return "#b00020" if suit in ("Hearts", "Diamonds") else "#1a1a1a"
 
 
+def suit_interpretation(suit):
+    return {
+        "Clubs": "Intuition/Motivation (Internal State)",
+        "Diamonds": "Perception/Actions (Performance)",
+        "Hearts": "Relationship/Manuver (Tactics)",
+        "Spades": "Understanding/Planning (Stratgy)",
+    }[suit]
+
+
+def skill_aspect_for_suit(suit):
+    return {
+        "Clubs": "Focus",
+        "Diamonds": "Technique",
+        "Hearts": "Tactics",
+        "Spades": "Strategy",
+    }[suit]
+
+
 def card_text_color(rank, suit):
     if rank == "Joker":
         return "#b00020" if suit == "Red" else "#1a1a1a"
     return card_suit_color(suit)
+
+
+def suit_color_name(rank, suit):
+    if rank == "Joker":
+        return "Red" if suit == "Red" else "Black"
+    return "Red" if suit in ("Hearts", "Diamonds") else "Black"
 
 
 def joker_symbol(suit):
@@ -64,28 +88,28 @@ def draw_card_image(canvas, rank, suit, card_width, card_height, offset_x=0, off
             card_left + 16,
             card_top + 18,
             text=corner_symbol,
-            font=("TkDefaultFont", int(14 * scale), "bold"),
+            font=("TkDefaultFont", int(21 * scale), "bold"),
             fill=accent,
         )
         canvas.create_text(
             card_right - 16,
             card_bottom - 18,
             text=corner_symbol,
-            font=("TkDefaultFont", int(14 * scale), "bold"),
+            font=("TkDefaultFont", int(21 * scale), "bold"),
             fill=accent,
         )
         canvas.create_text(
             (card_left + card_right) / 2,
             (card_top + card_bottom) / 2 - 12,
             text=joker_symbol(suit),
-            font=("TkDefaultFont", int(56 * scale), "bold"),
+            font=("TkDefaultFont", int(84 * scale), "bold"),
             fill=accent,
         )
         canvas.create_text(
             (card_left + card_right) / 2,
             (card_top + card_bottom) / 2 + 30,
             text=f"JOKER ({suit})",
-            font=("TkDefaultFont", int(12 * scale), "bold"),
+            font=("TkDefaultFont", int(18 * scale), "bold"),
             fill=accent,
         )
         return
@@ -98,14 +122,14 @@ def draw_card_image(canvas, rank, suit, card_width, card_height, offset_x=0, off
         card_left + 16,
         card_top + 18,
         text=rank,
-        font=("TkDefaultFont", int(14 * scale), "bold"),
+        font=("TkDefaultFont", int(21 * scale), "bold"),
         fill=color,
     )
     canvas.create_text(
         card_left + 16,
         card_top + 36,
         text=symbol,
-        font=("TkDefaultFont", int(12 * scale), "bold"),
+        font=("TkDefaultFont", int(18 * scale), "bold"),
         fill=color,
     )
 
@@ -113,14 +137,14 @@ def draw_card_image(canvas, rank, suit, card_width, card_height, offset_x=0, off
         card_right - 16,
         card_bottom - 36,
         text=symbol,
-        font=("TkDefaultFont", int(12 * scale), "bold"),
+        font=("TkDefaultFont", int(18 * scale), "bold"),
         fill=color,
     )
     canvas.create_text(
         card_right - 16,
         card_bottom - 18,
         text=rank,
-        font=("TkDefaultFont", int(14 * scale), "bold"),
+        font=("TkDefaultFont", int(21 * scale), "bold"),
         fill=color,
     )
 
@@ -129,7 +153,7 @@ def draw_card_image(canvas, rank, suit, card_width, card_height, offset_x=0, off
         (card_left + card_right) / 2,
         (card_top + card_bottom) / 2,
         text=symbol,
-        font=("TkDefaultFont", int(52 * scale), "bold"),
+        font=("TkDefaultFont", int(78 * scale), "bold"),
         fill=color,
     )
 
@@ -186,8 +210,8 @@ def main():
     canvas_width = card_width + (max_visible - 1) * stack_offset + 24
     canvas_height = card_height + 24
 
-    root.geometry("780x760")
-    root.minsize(780, 760)
+    root.geometry("780x1000")
+    root.minsize(780, 1000)
     root.resizable(True, True)
 
     style = ttk.Style(root)
@@ -199,7 +223,7 @@ def main():
     container = ttk.Frame(root, padding=16)
     container.pack(fill="both", expand=True)
 
-    title = ttk.Label(container, text="Draw a Card", font=("TkDefaultFont", 16, "bold"))
+    title = ttk.Label(container, text="Draw a Card", font=("TkDefaultFont", 24, "bold"))
     title.pack(pady=(0, 8))
 
     card_canvas = tk.Canvas(
@@ -212,18 +236,58 @@ def main():
     card_canvas.pack(pady=(0, 10))
 
     card_var = tk.StringVar(value="Press the button to draw")
-    card_label = ttk.Label(container, textvariable=card_var, font=("TkDefaultFont", 12))
+    card_label = ttk.Label(container, textvariable=card_var, font=("TkDefaultFont", 18))
     card_label.pack(pady=(0, 10))
 
     history_text = tk.Text(
         container,
         height=4,
         wrap="word",
-        font=("TkDefaultFont", 10),
+        font=("TkDefaultFont", 15),
     )
     history_text.pack(pady=(0, 10), fill="x")
     history_text.insert("1.0", "Drawn: ")
     history_text.config(state="disabled")
+
+    interpretation_var = tk.StringVar(value="Suit Meaning: ")
+    interpretation_label = ttk.Label(
+        container,
+        textvariable=interpretation_var,
+        font=("TkDefaultFont", 15),
+        wraplength=700,
+        justify="left",
+    )
+    interpretation_label.pack(pady=(0, 10))
+
+    outcome_var = tk.StringVar(value="Outcome: ")
+    outcome_label = ttk.Label(
+        container,
+        textvariable=outcome_var,
+        font=("TkDefaultFont", 15),
+        wraplength=700,
+        justify="left",
+    )
+    outcome_label.pack(pady=(0, 10))
+
+    adv_var = tk.StringVar(value="")
+    adv_label = ttk.Label(
+        container,
+        textvariable=adv_var,
+        font=("TkDefaultFont", 15),
+        wraplength=700,
+        justify="left",
+    )
+    adv_label.pack(pady=(0, 6))
+
+    xp_var = tk.StringVar(value="")
+    xp_label = ttk.Label(
+        container,
+        textvariable=xp_var,
+        font=("TkDefaultFont", 15),
+        wraplength=700,
+        justify="left",
+    )
+    xp_label.pack(pady=(0, 10))
 
     def format_card_short(rank, suit):
         if rank == "Joker":
@@ -264,8 +328,47 @@ def main():
                 break
         if last_rank == "Joker":
             card_var.set(f"Joker ({last_suit})")
+            interpretation_var.set("Suit Meaning: Joker")
+            outcome_var.set("Outcome: ")
         else:
             card_var.set(f"{last_rank} of {last_suit}")
+            interpretation_var.set(f"Suit Meaning: {suit_interpretation(last_suit)}")
+            pip_color = suit_color_name(last_rank, last_suit)
+            face_matches = 0
+            face_mismatches = 0
+            face_count = 0
+            joker_count = 0
+            for rank, suit in drawn_cards:
+                if rank in {"J", "Q", "K"}:
+                    face_count += 1
+                    if suit_color_name(rank, suit) == pip_color:
+                        face_matches += 1
+                    else:
+                        face_mismatches += 1
+                elif rank == "Joker":
+                    joker_count += 1
+            net_advantage = face_matches - face_mismatches
+            outcome_parts = []
+            adv_var.set("")
+            xp_var.set("")
+            if face_count > 0:
+                if net_advantage > 0:
+                    adv_var.set(f"Advantage: +{net_advantage}")
+                    outcome_parts.append(f"Advantage +{net_advantage}")
+                elif net_advantage < 0:
+                    adv_var.set(f"Disadvantage: {net_advantage}")
+                    outcome_parts.append(f"Disadvantage {net_advantage}")
+                else:
+                    adv_var.set("Adv/Dis: Neutral (0)")
+                    outcome_parts.append("Neutral (0)")
+            if joker_count > 0:
+                xp_var.set(f"PoV XP: +{joker_count} -> {skill_aspect_for_suit(last_suit)}")
+                outcome_parts.append(
+                    f"PoV XP +{joker_count} -> {skill_aspect_for_suit(last_suit)}"
+                )
+            if not outcome_parts:
+                outcome_parts.append("Neutral (0)")
+            outcome_var.set("Outcome: " + " | ".join(outcome_parts))
         card_label.configure(foreground=card_text_color(last_rank, last_suit))
         draw_card_stack(
             card_canvas,
@@ -289,6 +392,10 @@ def main():
         history = []
         draw_batches = []
         card_var.set("Press the button to draw")
+        interpretation_var.set("Suit Meaning: ")
+        outcome_var.set("Outcome: ")
+        adv_var.set("")
+        xp_var.set("")
         card_label.configure(foreground="#1a1a1a")
         card_canvas.delete("all")
         update_history()
@@ -315,8 +422,51 @@ def main():
             prev_rank, prev_suit = prev_batch[-1]
             if prev_rank == "Joker":
                 card_var.set(f"Joker ({prev_suit})")
+                interpretation_var.set("Suit Meaning: Joker")
+                outcome_var.set("Outcome: ")
+                adv_var.set("")
+                xp_var.set("")
             else:
                 card_var.set(f"{prev_rank} of {prev_suit}")
+                interpretation_var.set(f"Suit Meaning: {suit_interpretation(prev_suit)}")
+                pip_color = suit_color_name(prev_rank, prev_suit)
+                face_matches = 0
+                face_mismatches = 0
+                face_count = 0
+                joker_count = 0
+                for rank, suit in prev_batch:
+                    if rank in {"J", "Q", "K"}:
+                        face_count += 1
+                        if suit_color_name(rank, suit) == pip_color:
+                            face_matches += 1
+                        else:
+                            face_mismatches += 1
+                    elif rank == "Joker":
+                        joker_count += 1
+                net_advantage = face_matches - face_mismatches
+                outcome_parts = []
+                adv_var.set("")
+                xp_var.set("")
+                if face_count > 0:
+                    if net_advantage > 0:
+                        adv_var.set(f"Advantage: +{net_advantage}")
+                        outcome_parts.append(f"Advantage +{net_advantage}")
+                    elif net_advantage < 0:
+                        adv_var.set(f"Disadvantage: {net_advantage}")
+                        outcome_parts.append(f"Disadvantage {net_advantage}")
+                    else:
+                        adv_var.set("Adv/Dis: Neutral (0)")
+                        outcome_parts.append("Neutral (0)")
+                if joker_count > 0:
+                    xp_var.set(
+                        f"PoV XP: +{joker_count} -> {skill_aspect_for_suit(prev_suit)}"
+                    )
+                    outcome_parts.append(
+                        f"PoV XP +{joker_count} -> {skill_aspect_for_suit(prev_suit)}"
+                    )
+                if not outcome_parts:
+                    outcome_parts.append("Neutral (0)")
+                outcome_var.set("Outcome: " + " | ".join(outcome_parts))
             card_label.configure(foreground=card_text_color(prev_rank, prev_suit))
             draw_card_stack(
                 card_canvas,
@@ -329,6 +479,10 @@ def main():
             )
         else:
             card_var.set("Press the button to draw")
+            interpretation_var.set("Suit Meaning: ")
+            outcome_var.set("Outcome: ")
+            adv_var.set("")
+            xp_var.set("")
             card_label.configure(foreground="#1a1a1a")
             card_canvas.delete("all")
         update_history()
