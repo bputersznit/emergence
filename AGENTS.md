@@ -31,3 +31,4 @@ Ubuntu GUI app that draws cards from a 54-card deck (52 + 2 jokers), with a draw
 
 ## Git
 - Repo is initialized locally and has a remote named `emergence`.
+- Network access for this environment may be restricted; `git push` can fail with DNS resolution errors here even if it works in a normal terminal.
