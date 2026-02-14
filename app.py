@@ -361,11 +361,21 @@ def main():
                 else:
                     adv_var.set("Adv/Dis: Neutral (0)")
                     outcome_parts.append("Neutral (0)")
+            xp_parts = []
             if joker_count > 0:
-                xp_var.set(f"PoV XP: +{joker_count} -> {skill_aspect_for_suit(last_suit)}")
-                outcome_parts.append(
-                    f"PoV XP +{joker_count} -> {skill_aspect_for_suit(last_suit)}"
+                suit_counts = {"Clubs": 0, "Diamonds": 0, "Hearts": 0, "Spades": 0}
+                for rank, suit in drawn_cards:
+                    if rank in {"J", "Q", "K"}:
+                        suit_counts[suit] += 1
+                for suit, count in suit_counts.items():
+                    if count > 0:
+                        xp_parts.append(f"+{count} {skill_aspect_for_suit(suit)}")
+                xp_parts.append(
+                    f"+{joker_count} {skill_aspect_for_suit(last_suit)} (Joker)"
                 )
+            if xp_parts:
+                xp_var.set("PoV XP: " + ", ".join(xp_parts))
+                outcome_parts.append("PoV XP " + ", ".join(xp_parts))
             if not outcome_parts:
                 outcome_parts.append("Neutral (0)")
             outcome_var.set("Outcome: " + " | ".join(outcome_parts))
@@ -457,13 +467,21 @@ def main():
                     else:
                         adv_var.set("Adv/Dis: Neutral (0)")
                         outcome_parts.append("Neutral (0)")
+                xp_parts = []
                 if joker_count > 0:
-                    xp_var.set(
-                        f"PoV XP: +{joker_count} -> {skill_aspect_for_suit(prev_suit)}"
+                    suit_counts = {"Clubs": 0, "Diamonds": 0, "Hearts": 0, "Spades": 0}
+                    for rank, suit in prev_batch:
+                        if rank in {"J", "Q", "K"}:
+                            suit_counts[suit] += 1
+                    for suit, count in suit_counts.items():
+                        if count > 0:
+                            xp_parts.append(f"+{count} {skill_aspect_for_suit(suit)}")
+                    xp_parts.append(
+                        f"+{joker_count} {skill_aspect_for_suit(prev_suit)} (Joker)"
                     )
-                    outcome_parts.append(
-                        f"PoV XP +{joker_count} -> {skill_aspect_for_suit(prev_suit)}"
-                    )
+                if xp_parts:
+                    xp_var.set("PoV XP: " + ", ".join(xp_parts))
+                    outcome_parts.append("PoV XP " + ", ".join(xp_parts))
                 if not outcome_parts:
                     outcome_parts.append("Neutral (0)")
                 outcome_var.set("Outcome: " + " | ".join(outcome_parts))
